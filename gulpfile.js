@@ -17,7 +17,7 @@ return gulp.src('app/sass/**/*.sass')
 gulp.task('browser-sync', ['build', 'copyindex', 'copyCssFiles', 'copyJS'], function() {
     browserSync.init({
         server: {
-            baseDir: "./dist"
+            baseDir: "./app"
         },
         notify: true,
         online: true,
@@ -27,10 +27,10 @@ gulp.task('browser-sync', ['build', 'copyindex', 'copyCssFiles', 'copyJS'], func
 
 gulp.task('build', function () {
     return browserify({entries: './app/js/index.jsx', extensions: ['.jsx'], debug: true})
-        .transform('babelify', {presets: ['es2015', 'react']})
+        .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
         .bundle()
         .pipe(source('bundle.js'))
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest('./app'));
 });
 
 gulp.task("copyindex", function(){
