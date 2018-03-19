@@ -21,7 +21,8 @@ gulp.task('browser-sync', ['build', 'copyindex', 'copyCssFiles', 'copyJS'], func
         },
         notify: true,
         online: true,
-        host: "192.168.0.11"
+        host: "192.168.0.11",
+        port: 8080
     });
 });
 
@@ -53,10 +54,10 @@ gulp.task("copyCssFiles", ['sass'], function(){
 gulp.task('watch', ['browser-sync'], function () {
 
     gulp.watch('./app/sass/**/*.sass', ['copyCssFiles'])
-    gulp.watch('./app/js/*.jsx', ['build']);
-    gulp.watch('./app/js/*.js', ['copyJS']);
+    gulp.watch('./app/js/**/*.jsx', ['build']);
+    gulp.watch('./app/js/**/*.js', ['copyJS']);
     gulp.watch('./app/index.html', ['copyindex']);
-    gulp.watch('./dist/*.*', browserSync.reload);
+    gulp.watch('./app/**/*.*', browserSync.reload);
 });
 
 gulp.task('default', ['watch']);

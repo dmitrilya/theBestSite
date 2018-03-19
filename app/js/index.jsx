@@ -5,4 +5,6 @@ import App from './App';
 
 const location = document.getElementById('root');
 
-ReactDOM.render(<App />, location);
+ReactDOM.render(
+  <App />, location
+);

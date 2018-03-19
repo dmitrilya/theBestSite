@@ -1,39 +1,43 @@
 import React, {Component} from 'react';
-import Input from './Components/Input';
+import Registration from './Components/Registration';
+import SignIn from './Components/SignIn';
 
 export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       users: [],
-      email: '',
-      password: ''
-    };
+      mode: true
+    }
   }
 
-  changeEmail = (event) => {
-    this.setState({email: event.target.value.substr(0, 140)});
-    console.log (this.state.email);
+  changeMode = () => {
+    this.setState({mode: !this.state.mode});
   }
 
-  changePassword = (event) => {
-    this.setState({password: event.target.value.substr(0, 140)});
+  handleButton = (email, password) => {
+    this.setState({users: this.state.users.concat({email: email, password: password})},
+                                                  () => {console.log (this.state.users)});
+    setTimeout(() => {this.changeMode()}, 4);
   }
 
-  handleButton = (event) => {
-    this.setState({users: this.state.users.concat({email: this.state.email, password: this.state.password})});
-    console.log (this.state.users);
+  mayLogin = (loginEmail, loginPassword) => {
+    var ifUser = false;
+    for (var i = 0; i < this.state.users.length; i++) {
+      if (this.state.users[i].email==loginEmail && this.state.users[i].password==loginPassword) {
+        alert("вы вошли");
+        ifUser = true;
+        return;
+      }
+    }
+    if (!ifUser) alert('Error');
   }
 
   render() {
-    return (<div>
-      <Input type="text" name="firstName" placeholder="Имя"/>
-      <Input type="text" name="lastName" placeholder="Фамилия"/>
-      <input type="email" onChange={this.changeEmail} name="email" placeholder="E-mail"/>
-      <input type="password" onChange={this.changePassword} name="password" placeholder="Password"/>
-      <div>
-        <input type="button" onClick={this.handleButton} value="Зарегистрировать"/>
-      </div>
-    </div>)
+    const mode = this.state.mode;
+    if (mode == true) {
+      return (<SignIn changeMode={this.changeMode} login={this.mayLogin}/>);
+    }
+    return (<Registration handleButton={this.handleButton}/>);
   }
 }
