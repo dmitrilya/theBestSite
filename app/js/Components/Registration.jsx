@@ -1,40 +1,70 @@
 import React, {Component} from 'react';
 import Input from './Input';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      firstName: '',
+      lastName: '',
       email: '',
       password: ''
     };
   }
 
-  changeEmail = (event) => {
-    this.setState({email: event.target.value.substr(0, 140)});
+  changeData = (event) => {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
   }
 
-  changePassword = (event) => {
-    this.setState({password: event.target.value.substr(0, 140)});
-  }
-
-  sendUser = (event) => {
-    var email = this.state.email;
-    var password = this.state.password;
-    this.props.handleButton(email, password);
+  sendUser = () => {
+    var elem = event.target,
+        x = -2,
+        y = 2,
+        blurring = 36,
+        valueXY = -2,
+        valueBlurring = -36,
+        inset = '',
+        porog = false;
+    shadow();
+    function shadow() {
+      if (x > -2.9) {
+        if (x > -0.1) {
+          porog = true;
+          inset = 'inset ';
+        }
+        x = -Math.abs(valueXY);
+        y = Math.abs(valueXY);
+        blurring = Math.abs(valueBlurring);
+        elem.style.boxShadow = inset + x + 'px ' + y + 'px ' + blurring + 'px';
+        valueXY = valueXY+0.2;
+        if (!porog) {
+          valueBlurring = valueBlurring+3.6;
+        }
+        else {
+          valueBlurring = valueBlurring+1.867;
+        }
+        setTimeout(shadow, 25)
+      }
+    }
+    const {firstName, lastName, email, password} = this.state;
+    setTimeout(() => {if (firstName != '' && lastName != '' && email != '' && password != '') {
+      this.props.createUser(firstName, lastName, email, password);
+    } else {
+      alert('Не все поля заполнены!')
+    }}, 500);
   }
 
   render() {
-    let email = this.state.email;
-    let password = this.state.password;
-    return (<div>
-      <Input type="text" name="firstName" placeholder="Имя"/>
-      <Input type="text" name="lastName" placeholder="Фамилия"/>
-      <input type="email" onChange={this.changeEmail} name="email" placeholder="E-mail"/>
-      <input type="password" onChange={this.changePassword} name="password" placeholder="Password"/>
-      <div>
-        <input type="button" onClick={this.sendUser}  value="Зарегистрировать"/>
-      </div>
+    const {email, password} = this.state;
+    return (<div className="signInWindow">
+      <Input type="text" className="textBox" onChange={this.changeData} name="firstName" placeholder="Имя"/>
+      <Input type="text" className="textBox" onChange={this.changeData} name="lastName" placeholder="Фамилия"/>
+      <Input type="email" className="textBox" onChange={this.changeData} name="email" placeholder="E-mail"/>
+      <Input type="password" className="textBox" onChange={this.changeData} name="password" placeholder="Password"/>
+      <Input type="button" className="btn signUp" onClick={this.sendUser} value="Create new account"/>
     </div>)
 
   }
