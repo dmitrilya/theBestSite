@@ -32,7 +32,7 @@ gulp.task('buildLogIn', function () {
         .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
         .bundle()
         .pipe(source('logIn.js'))
-        .pipe(gulp.dest('./app/js'));
+        .pipe(gulp.dest('./app/js/build'));
 });
 
 gulp.task('buildTicTacToe', function () {
@@ -40,7 +40,7 @@ gulp.task('buildTicTacToe', function () {
         .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
         .bundle()
         .pipe(source('TicTacToe.js'))
-        .pipe(gulp.dest('./app/js'));
+        .pipe(gulp.dest('./app/js/build'));
 });
 
 gulp.task('buildPare', function () {
@@ -48,7 +48,7 @@ gulp.task('buildPare', function () {
         .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
         .bundle()
         .pipe(source('Pare.js'))
-        .pipe(gulp.dest('./app/js'));
+        .pipe(gulp.dest('./app/js/build'));
 });
 
 gulp.task('buildBlackJack', function () {
@@ -56,7 +56,7 @@ gulp.task('buildBlackJack', function () {
         .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
         .bundle()
         .pipe(source('blackJack.js'))
-        .pipe(gulp.dest('./app/js'));
+        .pipe(gulp.dest('./app/js/build'));
 });
 
 gulp.task("copyindex", function(){
