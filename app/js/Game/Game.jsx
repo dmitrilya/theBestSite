@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import { Circle, Stage, Layer } from 'react-konva';
 import Konva from 'konva';
 
-class Game extends Component {
+export default class Game extends Component {
   constructor(props) {
     super(props);
   }
@@ -17,5 +16,3 @@ class Game extends Component {
 );
   }
 }
-
-ReactDOM.render(<Game />, document.getElementById('root'));

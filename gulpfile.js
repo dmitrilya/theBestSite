@@ -16,7 +16,7 @@ return gulp.src('app/sass/**/*.sass')
     .pipe(gulp.dest('./app/css'))
 });
 
-gulp.task('browser-sync', ['buildLogIn', 'buildTicTacToe', 'buildPare', 'buildBlackJack', 'buildGame', 'sass'], function() {
+gulp.task('browser-sync', ['build', 'sass'], function() {
     browserSync.init({
         server: {
             baseDir: "./app"
@@ -28,44 +28,12 @@ gulp.task('browser-sync', ['buildLogIn', 'buildTicTacToe', 'buildPare', 'buildBl
     });
 });
 
-gulp.task('buildLogIn', function () {
-    return browserify({entries: './app/js/LogIn/logIn.jsx', extensions: ['.jsx'], debug: true})
+gulp.task('build', function () {
+    return browserify({entries: './app/js/index.jsx', extensions: ['.jsx'], debug: true})
         .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
         .bundle()
-        .pipe(source('logIn.js'))
-        .pipe(gulp.dest('./app/js/build'));
-});
-
-gulp.task('buildTicTacToe', function () {
-    return browserify({entries: './app/js/TicTacToe/TicTacToe.jsx', extensions: ['.jsx'], debug: true})
-        .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
-        .bundle()
-        .pipe(source('ticTacToe.js'))
-        .pipe(gulp.dest('./app/js/build'));
-});
-
-gulp.task('buildPare', function () {
-    return browserify({entries: './app/js/Pare/Pare.jsx', extensions: ['.jsx'], debug: true})
-        .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
-        .bundle()
-        .pipe(source('pare.js'))
-        .pipe(gulp.dest('./app/js/build'));
-});
-
-gulp.task('buildBlackJack', function () {
-    return browserify({entries: './app/js/BlackJack/blackJack.jsx', extensions: ['.jsx'], debug: true})
-        .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
-        .bundle()
-        .pipe(source('blackJack.js'))
-        .pipe(gulp.dest('./app/js/build'));
-});
-
-gulp.task('buildGame', function () {
-    return browserify({entries: './app/js/Game/Game.jsx', extensions: ['.jsx'], debug: true})
-        .transform('babelify', {presets: ['es2015', 'react', 'env', 'stage-0']})
-        .bundle()
-        .pipe(source('game.js'))
-        .pipe(gulp.dest('./app/js/build'));
+        .pipe(source('bundle.js'))
+        .pipe(gulp.dest('./app/js'));
 });
 
 gulp.task("copyindex", function(){
@@ -88,14 +56,10 @@ gulp.task("copyCssFiles", ['sass'], function(){
 gulp.task('watch', ['browser-sync'], function () {
 
     gulp.watch('./app/sass/**/*.sass', ['sass']);
-    gulp.watch('./app/js/LogIn/*.*', ['buildLogIn']);
-    gulp.watch('./app/js/TicTacToe/*.*', ['buildTicTacToe']);
-    gulp.watch('./app/js/Pare/*.*', ['buildPare']);
-    gulp.watch('./app/js/BlackJack/*.*', ['buildBlackJack']);
-    gulp.watch('./app/js/Game/*.*', ['buildGame']);
+    gulp.watch('./app/js/**/*.jsx', ['build']);
     //gulp.watch('./app/js/**/*.js', ['copyJS']);
     //gulp.watch('./app/index.html', ['copyindex']);
-    gulp.watch('./app/**/*.*', browserSync.reload);
+    gulp.watch(['./app/**/*.*', '!./app/**/*.jsx'], browserSync.reload);
 });
 
 gulp.task('default', ['watch']);

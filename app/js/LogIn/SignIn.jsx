@@ -61,12 +61,12 @@ export default class SignIn extends Component {
   }
 
   render() {
-    return (<div className="signInWindow">
-      <Input className="textBox" type="email" onChange={this.changeData} name="email" placeholder="E-mail"/>
-      <Input className="textBox" type="password" onChange={this.changeData} name="password" placeholder="Password"/>
-      <div className="btns">
-        <Input className="btn" id="btn" type="button" onClick={this.login} value="SignIn"/>
-        <Input className="btn" type="button" onClick={this.changeMode} value="SignUp"/>
+    return (<div className="logInSignInWindow">
+      <Input className="logInTextBox" type="email" onChange={this.changeData} name="email" placeholder="E-mail"/>
+      <Input className="logInTextBox" type="password" onChange={this.changeData} name="password" placeholder="Password"/>
+      <div className="logInBtns">
+        <Input className="logInBtn" id="btn" type="button" onClick={this.login} value="SignIn"/>
+        <Input className="logInBtn" type="button" onClick={this.changeMode} value="SignUp"/>
       </div>
     </div>);
   }

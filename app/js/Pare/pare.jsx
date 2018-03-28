@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import Input from './../Components/Input';
 
-class Pare extends Component {
+export default class Pare extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,7 +30,6 @@ class Pare extends Component {
           continue;
         this.count++;
         this.index.push(i);
-        console.log(this.index);
         if(this.count == 2){
           if(winx[0][this.index[this.index.length-2]].style.background != winx[0][this.index[this.index.length-1]].style.background){
             winx[0][this.index[this.index.length-2]].style.background = 'url("../src/img/bgSignIn.jpg")';
@@ -58,7 +56,6 @@ class Pare extends Component {
     winx[0][3] = this.img3;
     winx[0][4] = this.img4;
     winx[0][5] = this.img5;
-    console.log(winx[0]);
     var winxCopy = [];
     winxCopy[0] = winx[0][0];
     winxCopy[1] = winx[0][1];
@@ -90,16 +87,14 @@ class Pare extends Component {
 
   render() {
     return(
-      <div className="window">
-        <Input className="bigBtn" type="button" onClick={this.handleButton} name="0" inputRef={(input) => {this.img0 = input}}/>
-        <Input className="bigBtn" type="button" onClick={this.handleButton} name="1" inputRef={(input) => {this.img1 = input}}/>
-        <Input className="bigBtn" type="button" onClick={this.handleButton} name="2" inputRef={(input) => {this.img2 = input}}/>
-        <Input className="bigBtn" type="button" onClick={this.handleButton} name="3" inputRef={(input) => {this.img3 = input}}/>
-        <Input className="bigBtn" type="button" onClick={this.handleButton} name="4" inputRef={(input) => {this.img4 = input}}/>
-        <Input className="bigBtn" type="button" onClick={this.handleButton} name="5" inputRef={(input) => {this.img5 = input}}/>
+      <div className="pareWindow">
+        <Input className="pareBigBtn" type="button" onClick={this.handleButton} name="0" inputRef={(input) => {this.img0 = input}}/>
+        <Input className="pareBigBtn" type="button" onClick={this.handleButton} name="1" inputRef={(input) => {this.img1 = input}}/>
+        <Input className="pareBigBtn" type="button" onClick={this.handleButton} name="2" inputRef={(input) => {this.img2 = input}}/>
+        <Input className="pareBigBtn" type="button" onClick={this.handleButton} name="3" inputRef={(input) => {this.img3 = input}}/>
+        <Input className="pareBigBtn" type="button" onClick={this.handleButton} name="4" inputRef={(input) => {this.img4 = input}}/>
+        <Input className="pareBigBtn" type="button" onClick={this.handleButton} name="5" inputRef={(input) => {this.img5 = input}}/>
       </div>
     )
   }
 }
-
-ReactDOM.render(<Pare/>, document.getElementById('root'));

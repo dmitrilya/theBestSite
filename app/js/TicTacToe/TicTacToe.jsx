@@ -1,11 +1,10 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import TicTacToe3x3 from './TicTacToe3x3';
 import TicTacToe4x4 from './TicTacToe4x4';
 import TicTacToe5x5 from './TicTacToe5x5';
 import Input from './../Components/Input';
 
-class TicTacToe extends Component {
+export default class TicTacToe extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -164,5 +163,3 @@ class TicTacToe extends Component {
     }
   }
 }
-
-ReactDOM.render(<TicTacToe/>, document.getElementById('root'));

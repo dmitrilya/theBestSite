@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import Registration from './Registration';
 import SignIn from './SignIn';
 
-class LogIn extends Component {
+export default class LogIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -48,8 +47,6 @@ class LogIn extends Component {
   createUser = (firstName, lastName, email, password) => {
     this.setState({
       users: this.state.users.concat({firstName: firstName, lastName: lastName, email: email, password: password})
-    }, () => {
-      console.log(this.state.users)
     });
     setTimeout(() => {
       this.changeMode()
@@ -60,7 +57,7 @@ class LogIn extends Component {
     for (var i = 0; i < this.state.users.length; i++) {
       if (this.state.users[i].email == loginEmail && this.state.users[i].password == loginPassword) {
         alert("Welcome " + this.state.users[i].firstName + ' ' + this.state.users[i].lastName + '!');
-        location.href = "html/main.html";
+        this.props.changeMode();
         return;
       }
     }
@@ -81,5 +78,3 @@ class LogIn extends Component {
     </div>);
   }
 }
-
-ReactDOM.render(<LogIn/>, document.getElementById('root'));

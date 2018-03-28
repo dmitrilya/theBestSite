@@ -59,12 +59,12 @@ export default class SignUp extends Component {
 
   render() {
     const {email, password} = this.state;
-    return (<div className="signInWindow">
-      <Input type="text" className="textBox" onChange={this.changeData} name="firstName" placeholder="Имя"/>
-      <Input type="text" className="textBox" onChange={this.changeData} name="lastName" placeholder="Фамилия"/>
-      <Input type="email" className="textBox" onChange={this.changeData} name="email" placeholder="E-mail"/>
-      <Input type="password" className="textBox" onChange={this.changeData} name="password" placeholder="Password"/>
-      <Input type="button" className="btn signUp" onClick={this.sendUser} value="Create new account"/>
+    return (<div className="logInSignInWindow">
+      <Input type="text" className="logInTextBox" onChange={this.changeData} name="firstName" placeholder="Имя"/>
+      <Input type="text" className="logInTextBox" onChange={this.changeData} name="lastName" placeholder="Фамилия"/>
+      <Input type="email" className="logInTextBox" onChange={this.changeData} name="email" placeholder="E-mail"/>
+      <Input type="password" className="logInTextBox" onChange={this.changeData} name="password" placeholder="Password"/>
+      <Input type="button" className="logInBtn logInSignUp" onClick={this.sendUser} value="Create new account"/>
     </div>)
 
   }

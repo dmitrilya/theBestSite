@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import Input from './../Components/Input';
 
-class BlackJack extends Component {
+export default class BlackJack extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,5 +49,3 @@ class BlackJack extends Component {
     </div>)
   }
 }
-
-ReactDOM.render(<BlackJack/>, document.getElementById('root'));
