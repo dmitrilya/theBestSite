@@ -25,7 +25,8 @@ export default class TicTacToe extends Component {
           ch = gameMap[i][j];
           count = 1;
         }
-        if (count == 3) {
+        if ((count == 3 && this.state.mode==1) || (count == 4 && this.state.mode==2)
+        || (count == 4 && this.state.mode==3)) {
           this.block(turn, btns);
           return;
         }
@@ -43,7 +44,8 @@ export default class TicTacToe extends Component {
           ch = gameMap[j][i];
           count = 1;
         }
-        if (count == 3) {
+        if ((count == 3 && this.state.mode==1) || (count == 4 && this.state.mode==2)
+        || (count == 4 && this.state.mode==3)) {
           this.block(turn, btns);
           return;
         }
@@ -64,7 +66,8 @@ export default class TicTacToe extends Component {
           row++;
           count = 1;
         }
-        if (count == 3) {
+        if ((count == 3 && this.state.mode==1) || (count == 4 && this.state.mode==2)
+        || (count == 4 && this.state.mode==3)) {
           this.block(turn, btns);
           return;
         }
@@ -84,7 +87,8 @@ export default class TicTacToe extends Component {
           col++;
           count = 1;
         }
-        if (count == 3) {
+        if ((count == 3 && this.state.mode==1) || (count == 4 && this.state.mode==2)
+        || (count == 4 && this.state.mode==3)) {
           this.block(turn, btns);
           return;
         }
@@ -105,7 +109,8 @@ export default class TicTacToe extends Component {
           row++;
           count = 1;
         }
-        if (count == 3) {
+        if ((count == 3 && this.state.mode==1) || (count == 4 && this.state.mode==2)
+        || (count == 4 && this.state.mode==3)) {
           this.block(turn, btns);
           return;
         }
@@ -125,7 +130,8 @@ export default class TicTacToe extends Component {
           col--;
           count = 1;
         }
-        if (count == 3) {
+        if ((count == 3 && this.state.mode==1) || (count == 4 && this.state.mode==2)
+        || (count == 4 && this.state.mode==3)) {
           this.block(turn, btns);
           return;
         }

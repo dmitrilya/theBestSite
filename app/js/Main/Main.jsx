@@ -1,21 +1,24 @@
-import React, {Component} from "react";
+import React, {
+  Component
+} from "react";
 import BlackJack from "./../BlackJack/BlackJack";
 import Game from "./../Game/Game";
 import Pare from "./../Pare/Pare";
 import TicTacToe from "./../TicTacToe/TicTacToe";
 import Menu from "./../Components/Menu";
+import GameSnake from './../GameSnake/GameSnake'
 
 export default class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mode: 0
+      mode: 2
     };
   }
 
   changeMode = event => {
     this.setState({
-      mode: + event.target.name
+      mode: +event.target.name
     });
   };
 
@@ -24,7 +27,7 @@ export default class Main extends Component {
       case 0:
         {
           return (<div>
-          <Menu changeMode={this.changeMode}/>
+            <Menu changeMode={this.changeMode}/>
           </div>);
         }
       case 1:
@@ -53,6 +56,13 @@ export default class Main extends Component {
           return (<div>
             <Menu changeMode={this.changeMode}/>
             <TicTacToe/>
+          </div>);
+        }
+      case 5:
+        {
+          return (<div>
+            <Menu changeMode={this.changeMode}/>
+            <GameSnake/>
           </div>);
         }
     }

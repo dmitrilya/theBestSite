@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Circle, Stage, Layer } from 'react-konva';
+import { Circle, Text, Stage, Layer } from 'react-konva';
 import Konva from 'konva';
+import Character from './Components/Character';
 
 export default class Game extends Component {
   constructor(props) {
@@ -8,9 +9,10 @@ export default class Game extends Component {
   }
 
   render() {
-    return (<Stage width={window.innerWidth} height={window.innerHeight}>
+    return (<Stage width={window.innerWidth-50} height={window.innerHeight-200}>
         <Layer>
-          <Circle radius={20} fill="yellow" x={20} y={20}/>
+          <Character/>
+
         </Layer>
       </Stage>
 );

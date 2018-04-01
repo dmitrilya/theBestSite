@@ -56,7 +56,7 @@ gulp.task("copyCssFiles", ['sass'], function(){
 gulp.task('watch', ['browser-sync'], function () {
 
     gulp.watch('./app/sass/**/*.sass', ['sass']);
-    gulp.watch('./app/js/**/*.jsx', ['build']);
+    gulp.watch('./app/js/**/**/*.jsx', ['build']);
     //gulp.watch('./app/js/**/*.js', ['copyJS']);
     //gulp.watch('./app/index.html', ['copyindex']);
     gulp.watch(['./app/**/*.*', '!./app/**/*.jsx'], browserSync.reload);
