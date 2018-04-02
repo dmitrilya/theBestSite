@@ -2,7 +2,7 @@ import React, {
   Component
 } from "react";
 import BlackJack from "./../BlackJack/BlackJack";
-import Game from "./../Game/Game";
+import Kek from "./../Game/Kek";
 import Pare from "./../Pare/Pare";
 import TicTacToe from "./../TicTacToe/TicTacToe";
 import Menu from "./../Components/Menu";
@@ -41,7 +41,7 @@ export default class Main extends Component {
         {
           return (<div>
             <Menu changeMode={this.changeMode}/>
-            <Game/>
+            <Kek/>
           </div>);
         }
       case 3:
