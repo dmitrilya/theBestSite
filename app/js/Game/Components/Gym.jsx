@@ -7,8 +7,6 @@ export default class Gym extends Component {
 		this.state = {
 			image: null
 		};
-		this.done = false;
-		this.changeMode = props.changeMode;
 	}
 
 	componentDidMount() {
