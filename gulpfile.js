@@ -21,6 +21,7 @@ gulp.task('browser-sync', ['build', 'sass'], function() {
         server: {
             baseDir: "./app"
         },
+        browser: "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
         notify: true,
         online: true,
         host: "192.168.0.12",

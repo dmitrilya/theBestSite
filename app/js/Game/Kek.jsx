@@ -1,16 +1,11 @@
-import React, { Component } from "react";
-import Game from './Game';
-import { Stage } from 'react-konva';
+import React from "react";
+import { Stage } from "react-konva";
+import Game from "./Game";
 
-export default class Kek extends Component {
-  constructor(props) {
-    super(props);
-
-  }
-
-  render() {
-      return (<Stage width={window.innerWidth-50} height={window.innerHeight-200}>
-        <Game/>
-              </Stage>);
-    }
-  }
+export default function Kek() {
+	return (
+		<Stage width={window.innerWidth - 50} height={window.innerHeight - 200}>
+			<Game />
+		</Stage>
+	);
+}
