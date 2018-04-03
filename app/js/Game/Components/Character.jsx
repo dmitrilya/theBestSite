@@ -69,7 +69,7 @@ export default class Character extends Component {
 
 	//смена характеристик героя при создании игры и при последующих переходах между комнатами
 	changeCharacteristics = room => {
-		//this.keyDown = false;			//снова можно реагировать на нажатие
+		this.keyDown = false;			//снова можно реагировать на нажатие
 		clearInterval(this.idTimer);
 		let character = getCharacter(room, this.changeMode);
 		this.x = character.startX;
@@ -91,17 +91,17 @@ export default class Character extends Component {
 			speedY = this.state.speedY;
 
 		if (this.x > this.minX && speedX < 0) {
-			this.x = this.x + speedX,
-			this.sprite.move({x: speedX})
+			this.x = this.x + speedX;
+			this.sprite.move({x: speedX});
 		} else if (this.x < this.maxX && speedX > 0) {
-			this.x = this.x + speedX,
-			this.sprite.move({x: speedX})
+			this.x = this.x + speedX;
+			this.sprite.move({x: speedX});
 		} else if (this.y > this.minY && speedY < 0) {
-			this.y = this.y + speedY,
-			this.sprite.move({y: speedY})
+			this.y = this.y + speedY;
+			this.sprite.move({y: speedY});
 		} else if (this.y < this.maxY && speedY > 0) {
-			this.y = this.y + speedY,
-			this.sprite.move({y: speedY})
+			this.y = this.y + speedY;
+			this.sprite.move({y: speedY});
 		}
 		this.goTo(this.x, this.y);
 	};
