@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Sprite, Group } from "react-konva";
+import { Sprite } from "react-konva";
 import getCharacter from "./getCharacter";
 
 export default class Character extends Component {
@@ -12,38 +12,68 @@ export default class Character extends Component {
 			animation: "stayRight"
 		};
 		this.animations = {
-      stayRight: [0, 302, 104, 150],
-      stayLeft: [104, 302, 104, 150],
-      walkingRight: [0, 0, 104, 150,
-                    104, 0, 104, 150,
-                    208, 0,  104, 150,
-                    312, 0, 104, 150,
-                    416, 0, 104, 150,
-                    520, 0, 104, 150],
-      walkingLeft: [0, 150, 104, 150,
-                    104, 150, 104, 150,
-                    208, 150,  104, 150,
-                    312, 150, 104, 150,
-                    416, 150, 104, 150,
-                    520, 150, 104, 150],
-      bomzStay: [31,54,76,206]
+      stayRight: [0, 0, 53, 136],
+      stayLeft: [0, 137, 53, 136],
+      walkingRight: [0, 0, 53, 136,
+                    53, 0, 53, 136,
+                    106, 0,  53, 136,
+                    159, 0, 53, 136,
+                    212, 0, 53, 136,
+                    265, 0, 53, 136,
+										318, 0, 53, 136,
+                    371, 0, 53, 136,
+                    424, 0,  53, 136,
+                    477, 0, 53, 136,
+                    530, 0, 53, 136,
+                    583, 0, 53, 136,
+										636, 0, 53, 136,
+                    689, 0, 53, 136,
+                    742, 0,  53, 136,
+                    793, 0, 53, 136,
+                    846, 0, 53, 136,
+                    899, 0, 53, 136,
+										952, 0, 53, 136,
+										1005, 0, 53, 136],
+      walkingLeft: [0, 137, 53, 136,
+                    53, 137, 53, 136,
+                    106, 137,  53, 136,
+                    159, 137, 53, 136,
+                    212, 137, 53, 136,
+                    265, 137, 53, 136,
+										318, 137, 53, 136,
+                    371, 137, 53, 136,
+                    424, 137,  53, 136,
+                    477, 137, 53, 136,
+                    530, 137, 53, 136,
+                    583, 137, 53, 136,
+										636, 137, 53, 136,
+                    689, 137, 53, 136,
+                    742, 137,  53, 136,
+                    793, 137, 53, 136,
+                    846, 137, 53, 136,
+                    899, 137, 53, 136,
+										952, 137, 53, 136,
+										1005, 137, 53, 136]
     };
 		this.idTimer; //запросы на перемещение
-		this.keyDown = false; //чтобы лисенер реагировал единожды на нажатие
-		this.x = null;
-		this.y = null;
+		this.keyDown = false; //чтобы лисенер реагировал единожды на нажатие//
+		this.x = null; //************координаты*****************
+		this.y = null; //**************героя*******************
 		this.minX = 	null; //***********************************
 		this.minY = 	null; //координаты возможного премещения***
 		this.maxX = 	null; //***********************************
 		this.maxY = 	null; //***********************************
 		this.goTo = 	null; //функция перехода между комнатами
 		this.interraction = 	null; //функция взаимодействия ('e', 'у'-русская)
-		this.changeMode = this.props.changeMode; //функция смены комнаты
+		this.changeMode = this.props.changeMode; 	//функция смены комнаты
+		this.inventoryOpenClose = this.props.inventoryOpenClose; 		//функция открытия/закрытия инвентаря
+		this.addToInventory = this.props.addToInventory;
+		this.dialog = this.props.dialog;
+		this.findedItems = this.props.findedItems;
 	}
 
 	//запуск спрайта героя, добавление лисенеров
 	componentDidMount() {
-		console.log("here");
 		this.sprite.start();
 		document.addEventListener("keydown", event => {
 			this.changeWay(event);
@@ -59,7 +89,7 @@ export default class Character extends Component {
 			clearInterval(this.idTimer); //удаление запросов на перемещение
 		});
 		var hero = new window.Image();
-		hero.src = "./../../../src/img/mainHero.png";
+		hero.src = "./../../../src/img/walk.png";
 		hero.onload = () => {
 			this.setState({
 				hero: hero
@@ -71,7 +101,7 @@ export default class Character extends Component {
 	changeCharacteristics = room => {
 		this.keyDown = false;			//снова можно реагировать на нажатие
 		clearInterval(this.idTimer);
-		let character = getCharacter(room, this.changeMode);
+		let character = getCharacter(room, this.changeMode, this.dialog, this.addToInventory, this.findedItems);
 		this.x = character.startX;
 		this.y = character.startY;
 		this.minX = 	character.minX;
@@ -85,25 +115,27 @@ export default class Character extends Component {
 	//смена координат героя и проверка по функции goTo() на смену комнаты
 	//********************************************************************
 	update = () => {
-		let x = this.state.x,
-			y = this.state.y,
+		let x = this.x,
+			y = this.y,
 			speedX = this.state.speedX,
 			speedY = this.state.speedY;
 
-		if (this.x > this.minX && speedX < 0) {
-			this.x = this.x + speedX;
+		if (x > this.minX && speedX < 0) {
+			x += speedX;
 			this.sprite.move({x: speedX});
-		} else if (this.x < this.maxX && speedX > 0) {
-			this.x = this.x + speedX;
+		} else if (x < this.maxX && speedX > 0) {
+			x += speedX;
 			this.sprite.move({x: speedX});
-		} else if (this.y > this.minY && speedY < 0) {
-			this.y = this.y + speedY;
+		} else if (y > this.minY && speedY < 0) {
+			y += speedY;
 			this.sprite.move({y: speedY});
-		} else if (this.y < this.maxY && speedY > 0) {
-			this.y = this.y + speedY;
+		} else if (y < this.maxY && speedY > 0) {
+			y += speedY;
 			this.sprite.move({y: speedY});
 		}
-		this.goTo(this.x, this.y);
+		this.x = x;
+		this.y = y;
+		this.goTo(x, y);
 	};
 	//********************************************************************
 
@@ -113,25 +145,27 @@ export default class Character extends Component {
 		let anim = this.state.animation;
 		if (!this.keyDown) {
 			if (event.key == "ArrowDown") {
-				this.setState({ speedX: 0, speedY: 15 });
+				this.setState({ speedX: 0, speedY: 9 });
 				if (anim == "stayRight") {
 					this.setState({ animation: "walkingRight" });
 				} else if (anim == "stayLeft") {
 					this.setState({ animation: "walkingLeft" });
 				}
 			} else if (event.key == "ArrowRight") {
-				this.setState({ speedX: 15, speedY: 0, animation: "walkingRight" });
+				this.setState({ speedX: 9, speedY: 0, animation: "walkingRight" });
 			} else if (event.key == "ArrowUp") {
-				this.setState({ speedX: 0, speedY: -15 });
+				this.setState({ speedX: 0, speedY: -9 });
 				if (anim == "stayRight") {
 					this.setState({ animation: "walkingRight" });
 				} else if (anim == "stayLeft") {
 					this.setState({ animation: "walkingLeft" });
 				}
 			} else if (event.key == "ArrowLeft") {
-				this.setState({ speedX: -15, speedY: 0, animation: "walkingLeft" });
-			} else if (event.key == "e" || event.key == "у") {
+				this.setState({ speedX: -9, speedY: 0, animation: "walkingLeft" });
+			} else if (event.key == "e" || event.key == "у" || event.key == "E" || event.key == "У") {
 				this.interraction(this.x, this.y);
+			} else if (event.key == "i" || event.key == "ш" || event.key == "I" || event.key == "Ш") {
+				this.inventoryOpenClose();
 			}
 			this.idTimer = setInterval(() => {//**********************************
 				this.update();									//создание запросов на перемещение**
@@ -142,8 +176,7 @@ export default class Character extends Component {
 	//********************************************************************
 
 	render() {
-		return (<Group >
-			<Sprite
+		return (<Sprite
 				ref={sprite => {
 					this.sprite = sprite;
 				}}
@@ -152,10 +185,8 @@ export default class Character extends Component {
 				image={this.state.hero}
 				animation={this.state.animation}
 				animations={this.animations}
-				frameRate={7}
+				frameRate={32}
 				frameIndex={0}
-			/>
-			</Group>
-		);
+			/>);
 	}
 }
