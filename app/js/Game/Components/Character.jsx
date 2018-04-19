@@ -67,9 +67,10 @@ export default class Character extends Component {
 		this.interraction = 	null; //функция взаимодействия ('e', 'у'-русская)
 		this.changeMode = this.props.changeMode; 	//функция смены комнаты
 		this.inventoryOpenClose = this.props.inventoryOpenClose; 		//функция открытия/закрытия инвентаря
-		this.addToInventory = this.props.addToInventory;
-		this.dialog = this.props.dialog;
-		this.findedItems = this.props.findedItems;
+		this.addToInventory = this.props.addToInventory;	//добавить в инвентарь
+		this.dialog = this.props.dialog; //запуск диалога по номеру
+		this.findedItems = this.props.findedItems; //список найденных предметов, чтобы не поднимать их дважды
+		this.openDoor = this.props.openDoor;
 	}
 
 	//запуск спрайта героя, добавление лисенеров
@@ -101,7 +102,7 @@ export default class Character extends Component {
 	changeCharacteristics = room => {
 		this.keyDown = false;			//снова можно реагировать на нажатие
 		clearInterval(this.idTimer);
-		let character = getCharacter(room, this.changeMode, this.dialog, this.addToInventory, this.findedItems);
+		let character = getCharacter(room, this.changeMode, this.dialog, this.addToInventory, this.findedItems, this.openDoor);
 		this.x = character.startX;
 		this.y = character.startY;
 		this.minX = 	character.minX;
@@ -163,7 +164,7 @@ export default class Character extends Component {
 			} else if (event.key == "ArrowLeft") {
 				this.setState({ speedX: -9, speedY: 0, animation: "walkingLeft" });
 			} else if (event.key == "e" || event.key == "у" || event.key == "E" || event.key == "У") {
-				this.interraction(this.x, this.y);
+				this.interraction(this.x, this.y); //взаимодействие
 			} else if (event.key == "i" || event.key == "ш" || event.key == "I" || event.key == "Ш") {
 				this.inventoryOpenClose();
 			}

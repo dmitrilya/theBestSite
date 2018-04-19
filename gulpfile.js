@@ -24,7 +24,8 @@ gulp.task('browser-sync', ['build', 'sass'], function() {
         browser: "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
         notify: true,
         online: true,
-        host: "172.16.20.49",
+        //host: "172.16.20.49", //имэи
+        host: "192.168.0.11", //база мамоны))
         port: 3000
     });
 });

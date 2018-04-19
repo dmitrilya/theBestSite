@@ -39,7 +39,7 @@ export default class Bum extends Component {
 					this.sprite = sprite;
 				}}
 				x={68}
-				y={300}
+				y={450}
 				image={this.state.bum}
 				animation="bumStay"
 				animations={this.animations}

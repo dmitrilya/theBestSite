@@ -9,7 +9,8 @@ export default class PrisonStart extends Component {
 			img: {
 				bg: null,
 				dialogImg: null,
-				key: null
+				key1: null,
+				key2: null
 			},
 			dialog: {
 				numberOfDialog: 0,		//порядковый номер текста
@@ -31,22 +32,36 @@ export default class PrisonStart extends Component {
 		img.dialogImg.onload = () => {
 			this.setState({ img: img });
 		};
-		if (!this.props.key1) { //	если не удален
-			img.key = new window.Image();
-			img.key.src = "../../../src/img/key2.png";
-			img.key.onload = () => {
+		if (!this.props.findedItems.key1) { //	если не удален
+			img.key1 = new window.Image();
+			img.key1.src = "../../../src/img/key2.png";
+			img.key1.onload = () => {
 				this.setState({ img: img });
 			};
 		}
-	}
+		if (!this.props.findedItems.key2) { //	если не удален
+			img.key2 = new window.Image();
+			img.key2.src = "../../../src/img/key2.png";
+			img.key2.onload = () => {
+				this.setState({ img: img });
+			};
+		}
+	}z
 
-	deleteKey() { //удалить ключ
+	deleteItem(numberOfItem) { //удалить итем с комнаты по номеру
 		let img = this.state.img;
-		img.key = null;
+		switch (numberOfItem) {
+			case 0:
+				img.key1 = null;
+				break;
+			case 1:
+				img.key2 = null;
+				break;
+		}
 		this.setState({img: img})
 	}
 
-	keySkip = (event) => { //проверка на enter
+	keySkip = (event) => { //проверка на enter (скип в диалогах)
 		if (event.keyCode == 13
 		) this.dialog();
 	}
@@ -116,9 +131,10 @@ export default class PrisonStart extends Component {
 	render() {
 		return (
 			<Group>
-				<Image image={this.state.img.bg} />
+				<Image image={this.state.img.bg} width={window.innerWidth0} height={window.innerHeight}/>
 				<Bum />
-				<Image image={this.state.img.key} x={500} y={350}/>
+				<Image image={this.state.img.key1} x={700} y={550}/>
+				<Image image={this.state.img.key2} x={780} y={550}/>
 				{this.state.dialog.dialogView}
 			</Group>
 		);

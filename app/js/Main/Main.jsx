@@ -40,7 +40,7 @@ export default class Main extends Component {
 			case 2: {
 				return (
 					<div>
-						<Menu changeMode={this.changeMode} />
+						{/*<Menu changeMode={this.changeMode} />*/}
 						<Game />
 					</div>
 				);

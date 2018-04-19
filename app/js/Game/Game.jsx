@@ -11,9 +11,11 @@ export default class Game extends Component {
 		this.state = {
 			numberOfRoom: 0
 		};
-		this.findedItems = {
-			key1: false
+		this.findedItems = { //список поднятых предметов
+			key1: false,
+			key2: false
 		}
+		this.openedDoors = [false]; //список отпертых дверей
 	}
 
 	//первые характеристики персонажа
@@ -26,6 +28,18 @@ export default class Game extends Component {
 		this.refs.character.changeCharacteristics(+room);
 		this.setState({ numberOfRoom: +room });
 	};
+
+	//открытие двери, если она отперта
+	//*********************************************************
+	openDoor = (numberOfDoor) => {
+		switch (numberOfDoor) {
+			case 0:
+				if (this.openedDoors[0]) alert("типа в другой комнате)");
+				else alert("дверь заперта");
+				break;
+		}
+	}
+	//*********************************************************
 
 	//запуск диалога, относительно переданного номера диалога///
 	//*********************************************************
@@ -46,12 +60,18 @@ export default class Game extends Component {
 	//добавить в инвентаь//////////
 	//*****************************************************
 	addToInventory = (numberOfItem) => {
-		this.refs.inventory.addToInventory(numberOfItem);
-		switch (numberOfItem) {
-			case 0:
-				this.findedItems.key1 = true;
-				this.refs.ps.deleteKey();
-				break;
+		if (this.refs.inventory.numberOfSlot()!==undefined) { //не поднимет, если не будет пустых слотов
+			this.refs.inventory.addToInventory(numberOfItem);
+			switch (numberOfItem) { //помечание поднятым и удаление с комнаты
+				case 0:
+					this.findedItems.key1 = true;
+					this.refs.ps.deleteItem(numberOfItem);
+					break;
+				case 1:
+					this.findedItems.key2 = true;
+					this.refs.ps.deleteItem(numberOfItem);
+					break;
+			}
 		}
 	}
 	//*****************************************************
@@ -63,7 +83,7 @@ export default class Game extends Component {
 
 
 		if (room===0) {																	//построение комнаты по номеру
-			roomOpenTeg = (<PrisonStart ref="ps" key1={this.findedItems.key1}>);
+			roomOpenTeg = (<PrisonStart ref="ps" findedItems={this.findedItems}>);
 			roomCloseTeg = (</PrisonStart>);
 		} else if (room === 1) {
 			roomOpenTeg = (<Gym ref="gym">);
@@ -71,12 +91,12 @@ export default class Game extends Component {
 		}
 
 		return (
-			<Stage width={window.innerWidth - 50} height={window.innerHeight - 200}>
+			<Stage width={window.innerWidth-20} height={window.innerHeight-20}>
 				<Layer>
 					{roomOpenTeg}
-					<Character ref="character" changeMode={this.changeMode} dialog={this.dialog}
+					<Character ref="character" changeMode={this.changeMode} dialog={this.dialog} openDoor={this.openDoor}
 					inventoryOpenClose={this.inventoryOpenClose} addToInventory={this.addToInventory} findedItems={this.findedItems}/>
-					<Inventory ref="inventory"/>
+					<Inventory ref="inventory" room={this.state.numberOfRoom} unlockDoor={(i) => {this.openedDoors[i] = true}} openedDoors={this.openedDoors}/>
 					{roomCloseTeg}
 				</Layer>
 			</Stage>
