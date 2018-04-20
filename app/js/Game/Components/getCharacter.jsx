@@ -1,6 +1,6 @@
-export default function changeCharacteristics(room, changeMode, dialog, addToInventory, findedItems, openDoor) {
+export default function getCharacter(nextRoom, lastRoom, changeMode, dialog, addToInventory, findedItems, openDoor) {
   let character ={};
-  if (room === 0) { //PrisonStart
+  if (nextRoom === 0) { //PrisonStart
     character.startX = 1;
     character.startY = window.innerHeight/2+170;
     character.minX = 0;
@@ -15,15 +15,15 @@ export default function changeCharacteristics(room, changeMode, dialog, addToInv
     character.interraction = (x, y) => {
       if (x > 28 && x < 117 && y < 470) {
         dialog(0);
-      } else if (x > 690 && x < 770 && y >425 && y < 485 && !findedItems.key1) {
+      } else if (x > 680 && x < 760 && y >425 && y < 485 && !findedItems.key1) {
         addToInventory(0);
-      } else if (x > 770 && x < 850 && y >425 && y < 485 && !findedItems.key2) {
+      } else if (x > 760 && x < 840 && y >425 && y < 485 && !findedItems.key2) {
         addToInventory(1);
       } else if (x > 1314 && x < 1429 && y < 440) {
         openDoor(0);
       }
     };
-  } else if (room === 1) { //Gym
+  } else if (nextRoom === 1) { //Gym
     character.startX = window.innerWidth - 100;
     character.startY = window.innerHeight/2+170;
     character.minX = 0;

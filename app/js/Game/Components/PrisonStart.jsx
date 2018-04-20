@@ -62,8 +62,7 @@ export default class PrisonStart extends Component {
 	}
 
 	keySkip = (event) => { //проверка на enter (скип в диалогах)
-		if (event.keyCode == 13
-		) this.dialog();
+		if (event.keyCode == 13) this.dialog();
 	}
 
 	dialog = () => {

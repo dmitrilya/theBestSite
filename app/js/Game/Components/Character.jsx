@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Sprite } from "react-konva";
 import getCharacter from "./getCharacter";
+import keydownListener from "./keydownListener";
 
 export default class Character extends Component {
 	constructor(props) {
@@ -9,7 +10,8 @@ export default class Character extends Component {
 			speedX: 0,
 			speedY: 0,
 			hero: null,
-			animation: "stayRight"
+			animation: "stayRight",
+			opacity: 100
 		};
 		this.animations = {
       stayRight: [0, 0, 53, 136],
@@ -57,6 +59,7 @@ export default class Character extends Component {
     };
 		this.idTimer; //запросы на перемещение
 		this.keyDown = false; //чтобы лисенер реагировал единожды на нажатие//
+		this.fastMove = false; //быстрое перемещение
 		this.x = null; //************координаты*****************
 		this.y = null; //**************героя*******************
 		this.minX = 	null; //***********************************
@@ -66,43 +69,28 @@ export default class Character extends Component {
 		this.goTo = 	null; //функция перехода между комнатами
 		this.interraction = 	null; //функция взаимодействия ('e', 'у'-русская)
 		this.changeMode = this.props.changeMode; 	//функция смены комнаты
-		this.inventoryOpenClose = this.props.inventoryOpenClose; 		//функция открытия/закрытия инвентаря
 		this.addToInventory = this.props.addToInventory;	//добавить в инвентарь
 		this.dialog = this.props.dialog; //запуск диалога по номеру
 		this.findedItems = this.props.findedItems; //список найденных предметов, чтобы не поднимать их дважды
-		this.openDoor = this.props.openDoor;
+		this.openDoor = this.props.openDoor; //взаимодействие с дверью
+		this.changeWay = keydownListener; //см. импорты
 	}
 
-	//запуск спрайта героя, добавление лисенеров
+	//запуск спрайта героя
 	componentDidMount() {
 		this.sprite.start();
-		document.addEventListener("keydown", event => {
-			this.changeWay(event);
-		});
-		document.addEventListener("keyup", event => {
-			this.setState({ speedX: 0, speedY: 0 });
-			if (this.state.animation == "walkingRight") {
-				this.setState({ animation: "stayRight" });
-			} else if (this.state.animation == "walkingLeft") {
-				this.setState({ animation: "stayLeft" });
-			}
-			this.keyDown = false;			//снова можно реагировать на нажатие
-			clearInterval(this.idTimer); //удаление запросов на перемещение
-		});
 		var hero = new window.Image();
 		hero.src = "./../../../src/img/walk.png";
 		hero.onload = () => {
-			this.setState({
-				hero: hero
-			});
+			this.setState({ hero });
 		};
 	}
 
 	//смена характеристик героя при создании игры и при последующих переходах между комнатами
-	changeCharacteristics = room => {
+	changeCharacteristics = (nextRoom, lastRoom) => {
 		this.keyDown = false;			//снова можно реагировать на нажатие
 		clearInterval(this.idTimer);
-		let character = getCharacter(room, this.changeMode, this.dialog, this.addToInventory, this.findedItems, this.openDoor);
+		let character = getCharacter(nextRoom, lastRoom, this.changeMode, this.dialog, this.addToInventory, this.findedItems, this.openDoor);
 		this.x = character.startX;
 		this.y = character.startY;
 		this.minX = 	character.minX;
@@ -140,44 +128,20 @@ export default class Character extends Component {
 	};
 	//********************************************************************
 
-	//keydown listener
-	//********************************************************************
-	changeWay = event => {
-		let anim = this.state.animation;
-		if (!this.keyDown) {
-			if (event.key == "ArrowDown") {
-				this.setState({ speedX: 0, speedY: 9 });
-				if (anim == "stayRight") {
-					this.setState({ animation: "walkingRight" });
-				} else if (anim == "stayLeft") {
-					this.setState({ animation: "walkingLeft" });
-				}
-			} else if (event.key == "ArrowRight") {
-				this.setState({ speedX: 9, speedY: 0, animation: "walkingRight" });
-			} else if (event.key == "ArrowUp") {
-				this.setState({ speedX: 0, speedY: -9 });
-				if (anim == "stayRight") {
-					this.setState({ animation: "walkingRight" });
-				} else if (anim == "stayLeft") {
-					this.setState({ animation: "walkingLeft" });
-				}
-			} else if (event.key == "ArrowLeft") {
-				this.setState({ speedX: -9, speedY: 0, animation: "walkingLeft" });
-			} else if (event.key == "e" || event.key == "у" || event.key == "E" || event.key == "У") {
-				this.interraction(this.x, this.y); //взаимодействие
-			} else if (event.key == "i" || event.key == "ш" || event.key == "I" || event.key == "Ш") {
-				this.inventoryOpenClose();
-			}
-			this.idTimer = setInterval(() => {//**********************************
-				this.update();									//создание запросов на перемещение**
-			}, 60);														//**********************************
-			this.keyDown = true; //больше не реагировать
+	keyUp = () => {
+		this.setState({ speedX: 0, speedY: 0 });
+		if (this.state.animation == "walkingRight") {
+			this.setState({ animation: "stayRight" });
+		} else if (this.state.animation == "walkingLeft") {
+			this.setState({ animation: "stayLeft" });
 		}
-	};
-	//********************************************************************
+		this.keyDown = false;			//снова можно реагировать на нажатие
+		clearInterval(this.idTimer); //удаление запросов на перемещение
+	}
 
 	render() {
 		return (<Sprite
+				opacity={this.state.opacity}
 				ref={sprite => {
 					this.sprite = sprite;
 				}}
