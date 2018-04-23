@@ -5,6 +5,7 @@ import { Stage, Layer } from "react-konva";
 import Character from "./Components/Character";
 import Pet from "./Components/Pet";
 import Inventory from "./Components/Inventory";
+import Shop from "./Components/Shop";
 
 export default class Game extends Component {
 	constructor(props) {
@@ -12,7 +13,8 @@ export default class Game extends Component {
 		this.state = {
 			numberOfRoom: 0, //номер комнаты (для построения)
 			pet: false, //есть ли питомец
-			turn: "character" //кем управлять (character/pet)
+			turn: "character", //кем управлять (character/pet)
+			shop: false
 		};
 		this.findedItems = { //список поднятых предметов
 			key1: false,
@@ -29,22 +31,31 @@ export default class Game extends Component {
 
 		//добавление лисенеров
 		document.addEventListener("keydown", event => {
-			if (event.keyCode === 90) { //сменить управление (герой/питомец)
-				if (this.state.pet) {
-				this.state.turn === "pet" ? this.setState({turn: "character"}) : this.setState({turn: "pet"});
+			if (event.keyCode === 90) { // 'z' сменить управление (герой/питомец)
+				if (this.state.pet && !this.refs.pet.mount) { //если питомец включен и он не маунт
+					if (this.state.turn === "pet" && this.wherePerson.length === 0) this.setState({turn: "character"});
+					//если управление питомцем и он не в другой комнате, сменить на героя
+				  else this.setState({turn: "pet"}); //если управление героем, сменить на питомца
 				}
 			} else if (event.key == "i" || event.key == "ш" || event.key == "I" || event.key == "Ш") { //открыть/закрыть инвернтарь
         this.inventoryOpenClose();
       }	else if (event.keyCode == 49 || event.keyCode == 50 || event.keyCode == 51) { //смена скина питомца
-				if (!this.state.pet) this.setState({pet: true, turn: "pet"});
-        this.refs.pet.setAnimal(event.keyCode);
-      } else if (event.keyCode == 48) { //смена скина питомца
+				if (!this.state.pet) this.setState({pet: true, turn: "pet"}); //включить питомца и передать ему управление
+        this.refs.pet.setAnimal(event.keyCode); //сменить питомца
+				this.isPetMount();
+
+      } else if (event.keyCode == 48) { // '0' удаление питомца
 				if (this.state.turn === "pet") {
+					if (this.wherePerson.length > 0) {
+						if (this.wherePerson.length === 2) this.changeMode(this.wherePerson[1]); //чтобы по порядку вернуться в комнату, где герой
+						this.changeMode(this.wherePerson[0]); //вернуться в комнату с героем после удаления
+					}
 					this.setState({turn: "character"});
 				}
-				this.setState({pet: false});
+				this.refs.character.canMount = false;
+				if (this.state.pet) this.setState({pet: false});
       } else {
-				if (this.state.turn === "character" && this.wherePerson.length === 0) {
+				if (this.state.turn === "character") {
 					this.refs.character.changeWay(event);
 				} else if (this.state.turn === "pet") {
 					this.refs.pet.changeWay(event);
@@ -65,7 +76,7 @@ export default class Game extends Component {
 	changeMode = room => {
 		if (this.state.turn === "character") {
 			this.refs.character.changeCharacteristics(+room, +this.state.numberOfRoom);
-			this.refs.pet.changeCharacteristics(+room, +this.state.numberOfRoom);
+			if (this.state.pet) this.refs.pet.changeCharacteristics(+room, +this.state.numberOfRoom);
 			this.setState({ numberOfRoom: +room });
 		} else { //если управление питомцем
 			if (this.wherePerson.length === 0) this.refs.character.setState({opacity: 0}); //убрать героя при переходе
@@ -75,7 +86,8 @@ export default class Game extends Component {
 			if (this.wherePerson.length < 3) {
 				this.refs.pet.changeCharacteristics(+room, +this.state.numberOfRoom);
 
-				if (room == this.wherePerson[this.wherePerson.length-1]) { //если возвращаемся (новая комната равна последней)
+				//если возвращаемся (новая комната равна последней) или произошло удаление питомца при длине массива три
+				if (room == this.wherePerson[this.wherePerson.length-1]) {
 					this.wherePerson.splice(-1, 1); //удалить последнюю комнату из пути до хозяина
 					if (this.wherePerson.length === 0) { //вернуть героя, если вернулись в комнату, где ушли от хозяина
 						this.refs.character.setState({opacity: 100});
@@ -141,6 +153,33 @@ export default class Game extends Component {
 	}
 	//*****************************************************
 
+	//проверка на маунта в changeCharacteristics у героя
+	//*****************************************************
+	isPetMount = () => {
+		let mount = this.refs.pet.mount;
+		this.refs.character.canMount = mount;
+		if (mount) {
+			this.refs.character.petCoords.x = this.refs.pet.x;
+			this.refs.character.petCoords.y = this.refs.pet.y;
+			this.setState({turn: "character"});
+		}
+		else {
+			this.refs.character.petCoords.x = null;
+			this.refs.character.petCoords.y = null;
+		}
+	}
+	//*****************************************************
+
+	//возвращает скорость маунта
+	//********************************************
+	mountSpeed = () => {return this.refs.pet.speed}
+	//********************************************
+
+	//вызов функции update, после взаимодействия героя с маунтом
+	//**********************************************************
+	mountUpdate = (way) => {this.refs.pet.update(way)}
+	//**********************************************************
+
 	render() {
 		const room = this.state.numberOfRoom;
 		let roomOpenTeg,
@@ -162,10 +201,12 @@ export default class Game extends Component {
 				<Layer>
 					{roomOpenTeg}
 					<Character ref="character" changeMode={this.changeMode} dialog={this.dialog} openDoor={this.openDoor}
-					addToInventory={this.addToInventory} findedItems={this.findedItems}/>
+					addToInventory={this.addToInventory} findedItems={this.findedItems} mountSpeed={this.mountSpeed}
+					mountUpdate={this.mountUpdate}/>
 					{this.state.pet ? <Pet ref="pet" changeMode={this.changeMode} addToInventory={this.addToInventory}
 														initRoom={this.state.numberOfRoom} findedItems={this.findedItems}/> : null}
 					<Inventory ref="inventory" room={this.state.numberOfRoom} unlockDoor={(i) => {this.openedDoors[i] = true}} openedDoors={this.openedDoors}/>
+					{this.state.shop ? <Shop/> : null}
 					{roomCloseTeg}
 				</Layer>
 			</Stage>

@@ -7,8 +7,6 @@ export default class Character extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			speedX: 0,
-			speedY: 0,
 			hero: null,
 			animation: "stayRight",
 			opacity: 100
@@ -57,9 +55,9 @@ export default class Character extends Component {
 										952, 137, 53, 136,
 										1005, 137, 53, 136]
     };
+		this.speed = 9;
 		this.idTimer; //запросы на перемещение
 		this.keyDown = false; //чтобы лисенер реагировал единожды на нажатие//
-		this.fastMove = false; //быстрое перемещение
 		this.x = null; //************координаты*****************
 		this.y = null; //**************героя*******************
 		this.minX = 	null; //***********************************
@@ -74,6 +72,8 @@ export default class Character extends Component {
 		this.findedItems = this.props.findedItems; //список найденных предметов, чтобы не поднимать их дважды
 		this.openDoor = this.props.openDoor; //взаимодействие с дверью
 		this.changeWay = keydownListener; //см. импорты
+		this.petCoords = {x: null, y: null};
+		this.canMount;
 	}
 
 	//запуск спрайта героя
@@ -86,11 +86,12 @@ export default class Character extends Component {
 		};
 	}
 
-	//смена характеристик героя при создании игры и при последующих переходах между комнатами
+	//смена характеристик героя при создании игры и при переходах между комнатами
 	changeCharacteristics = (nextRoom, lastRoom) => {
 		this.keyDown = false;			//снова можно реагировать на нажатие
-		clearInterval(this.idTimer);
-		let character = getCharacter(nextRoom, lastRoom, this.changeMode, this.dialog, this.addToInventory, this.findedItems, this.openDoor);
+		clearInterval(this.idTimer); //таймер сам не удалится при переходе (только при отжатии клавиши)
+		let character = getCharacter(nextRoom, lastRoom, this.changeMode, this.dialog,
+			this.addToInventory, this.findedItems, this.openDoor);
 		this.x = character.startX;
 		this.y = character.startY;
 		this.minX = 	character.minX;
@@ -101,26 +102,36 @@ export default class Character extends Component {
 		this.interraction = character.interraction;
 	};
 
+	//оседлать маунта
+	//********************************************************************
+	mount = () => {
+		let petX = this.petCoords.x;
+		let petY = this.petCoords.y;
+		if (this.x > petX+10 && this.x < petX+150 && this.y > petY-50 && this.y < petY) {
+			this.speed = this.props.mountSpeed();
+		}
+	}
+	//********************************************************************
+
 	//смена координат героя и проверка по функции goTo() на смену комнаты
 	//********************************************************************
-	update = () => {
+	update = (way) => {
 		let x = this.x,
-			y = this.y,
-			speedX = this.state.speedX,
-			speedY = this.state.speedY;
+				y = this.y,
+				speed = this.speed;
 
-		if (x > this.minX && speedX < 0) {
-			x += speedX;
-			this.sprite.move({x: speedX});
-		} else if (x < this.maxX && speedX > 0) {
-			x += speedX;
-			this.sprite.move({x: speedX});
-		} else if (y > this.minY && speedY < 0) {
-			y += speedY;
-			this.sprite.move({y: speedY});
-		} else if (y < this.maxY && speedY > 0) {
-			y += speedY;
-			this.sprite.move({y: speedY});
+		if (x > this.minX && way === 37) {
+			x -= speed;
+			this.sprite.move({x: -speed});
+		} else if (x < this.maxX && way === 39) {
+			x += speed;
+			this.sprite.move({x: speed});
+		} else if (y > this.minY && way === 38) {
+			y -= speed;
+			this.sprite.move({y: -speed});
+		} else if (y < this.maxY && way === 40) {
+			y += speed;
+			this.sprite.move({y: speed});
 		}
 		this.x = x;
 		this.y = y;
@@ -128,16 +139,19 @@ export default class Character extends Component {
 	};
 	//********************************************************************
 
+	//отжатие клавиши
+	//********************************************************************
 	keyUp = () => {
-		this.setState({ speedX: 0, speedY: 0 });
 		if (this.state.animation == "walkingRight") {
 			this.setState({ animation: "stayRight" });
 		} else if (this.state.animation == "walkingLeft") {
 			this.setState({ animation: "stayLeft" });
 		}
+		if (this.speed !== 9) this.props.stopMount;
 		this.keyDown = false;			//снова можно реагировать на нажатие
 		clearInterval(this.idTimer); //удаление запросов на перемещение
 	}
+	//********************************************************************
 
 	render() {
 		return (<Sprite

@@ -1,7 +1,7 @@
 export default function getPet(nextRoom, lastRoom, changeMode, addToInventory, findedItems) {
   let pet ={};
   if (nextRoom === 0) { //PrisonStart
-    pet.startX = 1;
+    pet.startX = 100;
     pet.startY = window.innerHeight/2+170;
     pet.minX = 0;
     pet.minY = window.innerHeight/2 + 140;

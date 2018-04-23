@@ -7,8 +7,6 @@ export default class Pet extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      speedX: 0,
-      speedY: 0,
       img: {
         dog: null,
         chicken: null
@@ -16,12 +14,13 @@ export default class Pet extends Component {
       animation: "stayRight",
       skin: null
     }
-    this.animations;
+    this.animations; //анимации для спрайта
+    this.mount; //является ли питомец маунтом
+    this.speed = null;
     this.idTimer; //запросы на перемещение
 		this.keyDown = false; //чтобы лисенер реагировал единожды на нажатие//
-		this.fastMove = false; //быстрое перемещение
 		this.x = null; //************координаты*****************
-		this.y = null; //**************героя*******************
+		this.y = null; //**************питомца*******************
 		this.minX = 	null; //***********************************
 		this.minY = 	null; //координаты возможного премещения***
 		this.maxX = 	null; //***********************************
@@ -69,6 +68,8 @@ export default class Pet extends Component {
                         364, 59, 90, 58,
                         455, 59, 90, 58]
         };
+        this.mount = true;
+        this.speed = 40;
         this.setState({skin: this.state.img.dog})
         break;
         case 50:
@@ -82,6 +83,8 @@ export default class Pet extends Component {
                           50, 0, 50, 49,
                           100, 0,  50, 48]
           };
+          this.mount = false;
+          this.speed = 30;
           this.setState({skin: this.state.img.chicken})
           break;
     }
@@ -105,24 +108,23 @@ export default class Pet extends Component {
 
 	//смена координат питомца и проверка по функции goTo() на смену комнаты
 	//********************************************************************
-	update = () => {
+  update = (way) => {
 		let x = this.x,
-			y = this.y,
-			speedX = this.state.speedX,
-			speedY = this.state.speedY;
+				y = this.y,
+				speed = this.speed;
 
-		if (x > this.minX && speedX < 0) {
-			x += speedX;
-			this.sprite.move({x: speedX});
-		} else if (x < this.maxX && speedX > 0) {
-			x += speedX;
-			this.sprite.move({x: speedX});
-		} else if (y > this.minY && speedY < 0) {
-			y += speedY;
-			this.sprite.move({y: speedY});
-		} else if (y < this.maxY && speedY > 0) {
-			y += speedY;
-			this.sprite.move({y: speedY});
+		if (x > this.minX && way === 37) {
+			x -= speed;
+			this.sprite.move({x: -speed});
+		} else if (x < this.maxX && way === 39) {
+			x += speed;
+			this.sprite.move({x: speed});
+		} else if (y > this.minY && way === 38) {
+			y -= speed;
+			this.sprite.move({y: -speed});
+		} else if (y < this.maxY && way === 40) {
+			y += speed;
+			this.sprite.move({y: speed});
 		}
 		this.x = x;
 		this.y = y;
@@ -133,7 +135,6 @@ export default class Pet extends Component {
   //отжатие клавиши
   //********************************************************************
 	keyUp = () => {
-		this.setState({ speedX: 0, speedY: 0 });
 		if (this.state.animation == "walkingRight") {
 			this.setState({ animation: "stayRight" });
 		} else if (this.state.animation == "walkingLeft") {
