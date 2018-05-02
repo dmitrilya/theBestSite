@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import { Image, Sprite } from "react-konva";
-import getPet from "./getPet";
+import {getPet, availableArea} from "./getPet";
 import keydownListener from "./keydownListener";
 
 export default class Pet extends Component {
@@ -31,6 +31,8 @@ export default class Pet extends Component {
 		this.addToInventory = this.props.addToInventory;	//добавить в инвентарь
 		this.findedItems = this.props.findedItems; //список найденных предметов, чтобы не поднимать их дважды
 		this.changeWay = keydownListener; //см. импорты
+    this.height = null;
+    this.width = null;
   }
 
   componentDidMount() {
@@ -49,66 +51,78 @@ export default class Pet extends Component {
 		};
   }
 
-  setAnimal = (anim) => {
+  setAnimal = (anim, currentRoom) => {
+    let pet;
     switch (anim) {
-      case 49:
+      case 49: //dog
         this.animations = {
-          stayRight: [0, 0, 90, 58],
-          stayLeft: [0, 59, 90, 58],
-          walkingRight: [0, 0, 90, 58,
-                        91, 0, 90, 58,
-                        182, 0,  90, 58,
-                        273, 0, 90, 58,
-                        364, 0, 90, 58,
-                        455, 0, 90, 58],
-          walkingLeft: [0, 59, 90, 58,
-                        91, 59, 90, 58,
-                        182, 59,  90, 58,
-                        273, 59, 90, 58,
-                        364, 59, 90, 58,
-                        455, 59, 90, 58]
+          stayRight: [0, 0, 180, 116],
+          stayLeft: [0, 118, 180, 116],
+          walkingRight: [0, 0, 180, 116,
+                        182, 0, 180, 116,
+                        364, 0,  180, 116,
+                        546, 0, 180, 116,
+                        728, 0, 180, 116,
+                        910, 0, 180, 116],
+          walkingLeft: [0, 118, 180, 116,
+                        182, 118, 180, 116,
+                        364, 118,  180, 116,
+                        546, 118, 180, 116,
+                        728, 118, 180, 116,
+                        910, 118, 180, 116]
         };
         this.mount = true;
+        this.height = this.animations.walkingRight[4];
+        this.width = this.animations.walkingRight[2];
+        pet = availableArea(currentRoom, this.changeMode, this.addToInventory, this.findedItems, this.height, this.width);
+        this.minX = pet.minX;
+        this.minY = pet.minY;
+        this.maxX = pet.maxX;
+        this.maxY = pet.maxY;
         this.speed = 40;
         this.setState({skin: this.state.img.dog})
         break;
-        case 50:
-          this.animations = {
-            stayRight: [50, 51, 50, 49],
-            stayLeft: [50, 0, 50, 49],
-            walkingRight: [0, 51, 50, 49,
-                          50, 51, 50, 49,
-                          100, 51,  50, 48],
-            walkingLeft: [0, 0, 50, 49,
-                          50, 0, 50, 49,
-                          100, 0,  50, 48]
-          };
-          this.mount = false;
-          this.speed = 30;
-          this.setState({skin: this.state.img.chicken})
-          break;
+      case 50: //chicken
+        this.animations = {
+          stayRight: [50, 51, 50, 49],
+          stayLeft: [50, 0, 50, 49],
+          walkingRight: [0, 51, 50, 49,
+                        50, 51, 50, 49,
+                        100, 51,  50, 48],
+          walkingLeft: [0, 0, 50, 49,
+                        50, 0, 50, 49,
+                        100, 0,  50, 48]
+        };
+        this.mount = false;
+        this.height = this.animations.walkingRight[4];
+        this.width = this.animations.walkingRight[2] + this.animations.walkingRight[2] / 5 * 2;
+        pet = availableArea(currentRoom, this.changeMode, this.addToInventory, this.findedItems, this.height, this.width);
+        this.minX = pet.minX;
+        this.minY = pet.minY;
+        this.maxX = pet.maxX;
+        this.maxY = pet.maxY;
+        this.speed = 30;
+        this.setState({skin: this.state.img.chicken})
+        break;
     }
+
   }
 
   //смена характеристик питомца при создании игры и при последующих переходах между комнатами
 	changeCharacteristics = (nextRoom, lastRoom) => {
 		this.keyDown = false;			//снова можно реагировать на нажатие
 		clearInterval(this.idTimer);
-		let pet = getPet(nextRoom, lastRoom, this.changeMode, this.addToInventory, this.findedItems);
+		let pet = getPet(nextRoom, lastRoom, this.changeMode, this.addToInventory, this.findedItems, this.height);
 		this.x = pet.startX;
 		this.y = pet.startY;
-		this.minX = 	pet.minX;
-		this.minY = 	pet.minY
-		this.maxX = 	pet.maxX;
-		this.maxY = 	pet.maxY;
 		this.goTo = 	pet.goTo;
 		this.interraction = pet.interraction;
-    this.skin = pet.skin;
 	};
 
 	//смена координат питомца и проверка по функции goTo() на смену комнаты
 	//********************************************************************
   update = (way) => {
+    console.log("here");
 		let x = this.x,
 				y = this.y,
 				speed = this.speed;

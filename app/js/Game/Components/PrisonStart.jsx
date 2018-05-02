@@ -130,7 +130,7 @@ export default class PrisonStart extends Component {
 	render() {
 		return (
 			<Group>
-				<Image image={this.state.img.bg} width={window.innerWidth0} height={window.innerHeight}/>
+				<Image image={this.state.img.bg} width={window.innerWidth} height={window.innerHeight}/>
 				<Bum />
 				<Image image={this.state.img.key1} x={700} y={550}/>
 				<Image image={this.state.img.key2} x={780} y={550}/>

@@ -69,12 +69,10 @@ export default class LogIn extends Component {
     if (mode == true) {
       return (<div>
         <SignIn changeMode={this.changeMode} login={this.mayLogin}/>
-        <audio src="src/mp3/logInSound.mp3" autoplay="autoplay"/>
       </div>);
     }
     return (<div>
       <Registration createUser={this.createUser}/>
-      <audio src="src/mp3/logInSound.mp3" autoplay="autoplay"/>
     </div>);
   }
 }

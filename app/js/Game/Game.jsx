@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PrisonStart from "./Components/PrisonStart";
 import Gym from "./Components/Gym";
+import Farm from "./Components/Farm";
 import { Stage, Layer } from "react-konva";
 import Character from "./Components/Character";
 import Pet from "./Components/Pet";
@@ -18,11 +19,13 @@ export default class Game extends Component {
 		};
 		this.findedItems = { //список поднятых предметов
 			key1: false,
-			key2: false
+			key2: false,
+			shovel: false
 		}
 		this.openedDoors = [false]; //список отпертых дверей
 		this.wherePerson = []; //путь до хозяина (комнаты, через которые прошел питомец без хозяина) см. в this.changeMode
 		this.warning = false;
+		this.keyDown = false;
 	}
 
 	//первые характеристики персонажа
@@ -39,11 +42,12 @@ export default class Game extends Component {
 				}
 			} else if (event.key == "i" || event.key == "ш" || event.key == "I" || event.key == "Ш") { //открыть/закрыть инвернтарь
         this.inventoryOpenClose();
-      }	else if (event.keyCode == 49 || event.keyCode == 50 || event.keyCode == 51) { //смена скина питомца
-				if (!this.state.pet) this.setState({pet: true, turn: "pet"}); //включить питомца и передать ему управление
-        this.refs.pet.setAnimal(event.keyCode); //сменить питомца
-				this.isPetMount();
-
+      }	else if (event.keyCode == 49 || event.keyCode == 50 || event.keyCode == 51) {//смена скина питомца
+				if (this.refs.character.speed === 9) {
+					if (!this.state.pet) this.setState({pet: true/*, turn: "pet"*/}); //включить питомца и передать ему управление
+	        this.refs.pet.setAnimal(event.keyCode, this.state.numberOfRoom); //сменить питомца
+					this.isPetMount();
+				}
       } else if (event.keyCode == 48) { // '0' удаление питомца
 				if (this.state.turn === "pet") {
 					if (this.wherePerson.length > 0) {
@@ -57,18 +61,22 @@ export default class Game extends Component {
       } else {
 				if (this.state.turn === "character") {
 					this.refs.character.changeWay(event);
+					if (this.refs.character.speed !== 9) this.refs.pet.changeWay(event);
 				} else if (this.state.turn === "pet") {
 					this.refs.pet.changeWay(event);
 				}
 			}
+			this.keyDown = true;
 		});
 
 		document.addEventListener("keyup", () => {
 			if (this.state.turn === "character") {
 				this.refs.character.keyUp();
+				if (this.refs.character.speed !== 9) this.refs.pet.keyUp();
 			} else if (this.state.turn === "pet") {
 				this.refs.pet.keyUp();
 			}
+			this.keyDown = false;
 		});
   }
 
@@ -83,21 +91,25 @@ export default class Game extends Component {
 
 			//нельзя уйти питомцем дальше, чем на две комнаты
 			//*********************************************************
-			if (this.wherePerson.length < 3) {
-				this.refs.pet.changeCharacteristics(+room, +this.state.numberOfRoom);
 
-				//если возвращаемся (новая комната равна последней) или произошло удаление питомца при длине массива три
-				if (room == this.wherePerson[this.wherePerson.length-1]) {
-					this.wherePerson.splice(-1, 1); //удалить последнюю комнату из пути до хозяина
-					if (this.wherePerson.length === 0) { //вернуть героя, если вернулись в комнату, где ушли от хозяина
-						this.refs.character.setState({opacity: 100});
-					}
-				} else if (this.wherePerson.length < 2) { //добавить новую комнату в путь до хозяина
-					this.wherePerson.push(+this.state.numberOfRoom);
+			//если возвращаемся (новая комната равна последней) или произошло удаление
+			//питомца (см в добавлении лисенеров) при длине массива три
+			if (room == this.wherePerson[this.wherePerson.length-1]) {
+				this.wherePerson.splice(-1, 1); //удалить последнюю комнату из пути до хозяина
+				if (this.wherePerson.length === 0) { //вернуть героя, если вернулись в комнату, где ушли от хозяина
+					this.refs.character.setState({opacity: 100});
 				}
+				this.refs.pet.changeCharacteristics(+room, +this.state.numberOfRoom);
 				this.setState({ numberOfRoom: +room });
 				this.warning = false; //после каждого перехода снова можно кинуть варнинг
 			}
+			else if (this.wherePerson.length < 2) { //добавить новую комнату в путь до хозяина
+				this.wherePerson.push(+this.state.numberOfRoom);
+				this.refs.pet.changeCharacteristics(+room, +this.state.numberOfRoom);
+				this.setState({ numberOfRoom: +room });
+				this.warning = false; //после каждого перехода снова можно кинуть варнинг
+			}
+
 			//*********************************************************
 			else if (!this.warning) { //предупреждение при попытке уйти дальше двух комнат
 				alert("нельзя так далеко от хозяина");
@@ -148,6 +160,10 @@ export default class Game extends Component {
 					this.findedItems.key2 = true;
 					this.refs.ps.deleteItem(numberOfItem);
 					break;
+				case 2:
+					this.findedItems.shovel = true;
+					this.refs.farm.deleteItem(numberOfItem);
+					break;
 			}
 		}
 	}
@@ -160,25 +176,25 @@ export default class Game extends Component {
 		this.refs.character.canMount = mount;
 		if (mount) {
 			this.refs.character.petCoords.x = this.refs.pet.x;
-			this.refs.character.petCoords.y = this.refs.pet.y;
+			this.refs.character.petCoords.y = this.refs.pet.y; //координаты маунта
+			this.refs.character.mountSpeed = this.refs.pet.speed; //возвращает скорость маунта
 			this.setState({turn: "character"});
 		}
 		else {
 			this.refs.character.petCoords.x = null;
 			this.refs.character.petCoords.y = null;
+			this.refs.character.mountSpeed = null;
 		}
 	}
 	//*****************************************************
 
-	//возвращает скорость маунта
-	//********************************************
-	mountSpeed = () => {return this.refs.pet.speed}
-	//********************************************
-
-	//вызов функции update, после взаимодействия героя с маунтом
+	//передача координат маунта
 	//**********************************************************
-	mountUpdate = (way) => {this.refs.pet.update(way)}
-	//**********************************************************
+	mountCoords = () => {
+		this.refs.character.petCoords.x = this.refs.pet.x;
+		this.refs.character.petCoords.y = this.refs.pet.y;
+	}
+	//***********************************************************
 
 	render() {
 		const room = this.state.numberOfRoom;
@@ -194,6 +210,9 @@ export default class Game extends Component {
 		} else if (room === 2) {
 			roomOpenTeg = (<Gym ref="gym">);
 			roomCloseTeg = (</Gym>);
+		} else if (room === 3) {
+			roomOpenTeg = (<Farm ref="farm" findedItems={this.findedItems}>);
+			roomCloseTeg = (</Farm>);
 		}
 
 		return (
@@ -201,11 +220,11 @@ export default class Game extends Component {
 				<Layer>
 					{roomOpenTeg}
 					<Character ref="character" changeMode={this.changeMode} dialog={this.dialog} openDoor={this.openDoor}
-					addToInventory={this.addToInventory} findedItems={this.findedItems} mountSpeed={this.mountSpeed}
-					mountUpdate={this.mountUpdate}/>
+					addToInventory={this.addToInventory} findedItems={this.findedItems}	mountCoords={this.mountCoords}/>
 					{this.state.pet ? <Pet ref="pet" changeMode={this.changeMode} addToInventory={this.addToInventory}
 														initRoom={this.state.numberOfRoom} findedItems={this.findedItems}/> : null}
-					<Inventory ref="inventory" room={this.state.numberOfRoom} unlockDoor={(i) => {this.openedDoors[i] = true}} openedDoors={this.openedDoors}/>
+					<Inventory ref="inventory" room={this.state.numberOfRoom} unlockDoor={(i) => {this.openedDoors[i] = true}}
+					openedDoors={this.openedDoors}/>
 					{this.state.shop ? <Shop/> : null}
 					{roomCloseTeg}
 				</Layer>

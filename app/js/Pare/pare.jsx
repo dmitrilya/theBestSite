@@ -13,6 +13,7 @@ export default class Pare extends Component {
   }
 
   handleButton = (event) => {
+    
     let winx = this.state.winx;
     winx[0][event.target.name].style.background = winx[1][event.target.name];
 

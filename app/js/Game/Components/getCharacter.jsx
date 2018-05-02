@@ -36,6 +36,23 @@ export default function getCharacter(nextRoom, lastRoom, changeMode, dialog, add
       }
     };
     character.interraction = (x, y) => {};
+  } else if (nextRoom === 3) { //Farm
+    character.startX = window.innerWidth - 100;
+    character.startY = window.innerHeight/2+170;
+    character.minX = 0;
+    character.minY = window.innerHeight/2 + 35;
+    character.maxX = window.innerWidth - 99;
+    character.maxY = window.innerHeight - 165;
+    character.goTo = (x, y) => {
+      /*if (x > character.maxX) {
+        changeMode("0");
+      }*/
+    };
+    character.interraction = (x, y) => {
+      if (x > 700 && x < 780 && y >425 && y < 485 && !findedItems.shovel) {
+        addToInventory(2);;
+      }
+    };
   }
   return character;
 }

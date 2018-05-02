@@ -20,7 +20,7 @@ export default class Gym extends Component {
 	render() {
 		return (
 			<Group>
-				<Image image={this.state.image} width={window.innerWidth0} height={window.innerHeight}/>
+				<Image image={this.state.image} width={window.innerWidth} height={window.innerHeight}/>
 			</Group>
 		);
 	}

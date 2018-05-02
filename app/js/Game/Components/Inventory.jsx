@@ -7,7 +7,8 @@ export default class Inventory extends Component {
     this.state = {
       img: {
         bg: null,
-        key: null
+        key: null,
+        shovel: null
       },
       opened: false,
       inventory: [ //инвентарь
@@ -28,6 +29,11 @@ export default class Inventory extends Component {
     img.key = new window.Image();
 		img.key.src = "../../../src/img/key2.png";
 		img.key.onload = () => {
+			this.setState({ img: img });
+		};
+    img.shovel = new window.Image();
+		img.shovel.src = "../../../src/img/game/shovel.png";
+		img.shovel.onload = () => {
 			this.setState({ img: img });
 		};
   }
@@ -88,6 +94,9 @@ export default class Inventory extends Component {
       case 1:
         return (<Image image={this.state.img.key} name="Ключ не от клуба" onMouseUp={this.applyAnObject}
         onMouseOver={this.itemNotationOn} onMouseOut={this.itemNotationOff} draggable={true}/>);
+      case 2:
+        return (<Image image={this.state.img.shovel} name="Лопата" onMouseUp={this.applyAnObject}
+        onMouseOver={this.itemNotationOn} onMouseOut={this.itemNotationOff} draggable={true} width={60}/>);
     }
   }
   //******************************************

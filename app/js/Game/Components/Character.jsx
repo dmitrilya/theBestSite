@@ -73,7 +73,8 @@ export default class Character extends Component {
 		this.openDoor = this.props.openDoor; //взаимодействие с дверью
 		this.changeWay = keydownListener; //см. импорты
 		this.petCoords = {x: null, y: null};
-		this.canMount;
+		this.canMount = null;
+		this.mountSpeed = null;
 	}
 
 	//запуск спрайта героя
@@ -102,20 +103,20 @@ export default class Character extends Component {
 		this.interraction = character.interraction;
 	};
 
-	//оседлать маунта
+	//оседлать маунта/слезть с маунта
 	//********************************************************************
 	mount = () => {
-		let petX = this.petCoords.x;
-		let petY = this.petCoords.y;
+		let petX = this.petCoords.x,
+				petY = this.petCoords.y;
 		if (this.x > petX+10 && this.x < petX+150 && this.y > petY-50 && this.y < petY) {
-			this.speed = this.props.mountSpeed();
+			this.speed === 9 ? this.speed = this.mountSpeed : this.speed = 9;
 		}
 	}
 	//********************************************************************
 
 	//смена координат героя и проверка по функции goTo() на смену комнаты
 	//********************************************************************
-	update = (way) => {
+	update = way => {
 		let x = this.x,
 				y = this.y,
 				speed = this.speed;
@@ -136,6 +137,7 @@ export default class Character extends Component {
 		this.x = x;
 		this.y = y;
 		this.goTo(x, y);
+		if (this.speed !== 9) this.props.mountCoords();
 	};
 	//********************************************************************
 

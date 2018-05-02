@@ -1,14 +1,11 @@
-export default function getPet(nextRoom, lastRoom, changeMode, addToInventory, findedItems) {
+function getPet(nextRoom, lastRoom, changeMode, addToInventory, findedItems, height) {
   let pet ={};
   if (nextRoom === 0) { //PrisonStart
-    pet.startX = 100;
-    pet.startY = window.innerHeight/2+170;
-    pet.minX = 0;
-    pet.minY = window.innerHeight/2 + 140;
-    pet.maxX = window.innerWidth - 110;
-    pet.maxY = window.innerHeight - 90;
+    pet.startX = 0;
+    console.log(height);
+    pet.startY = window.innerHeight/4*3-height;
     pet.goTo = (x, y) => {
-      if (x < pet.minX) {
+      if (x < 1) {
         changeMode("1");
       }
     };
@@ -22,14 +19,10 @@ export default function getPet(nextRoom, lastRoom, changeMode, addToInventory, f
   } else if (nextRoom === 1) { //Gym
       pet.startX = (lastRoom===0) ? window.innerWidth - 100 : 1;
       pet.startY = window.innerHeight/2+170;
-      pet.minX = 0;
-      pet.minY = window.innerHeight/2 + 120;
-      pet.maxX = window.innerWidth - 99;
-      pet.maxY = window.innerHeight - 90;
       pet.goTo = (x, y) => {
-        if (x > pet.maxX) {
+        if (x > window.innerWidth - 99) {
           changeMode("0");
-        } else if (x < pet.minX) {
+        } else if (x < 1) {
           changeMode("2");
         }
       };
@@ -37,12 +30,8 @@ export default function getPet(nextRoom, lastRoom, changeMode, addToInventory, f
   } else if (nextRoom === 2) { //Gym2
       pet.startX = window.innerWidth - 100;
       pet.startY = window.innerHeight/2+170;
-      pet.minX = 0;
-      pet.minY = window.innerHeight/2 + 120;
-      pet.maxX = window.innerWidth - 99;
-      pet.maxY = window.innerHeight - 90;
       pet.goTo = (x, y) => {
-        if (x > pet.maxX) {
+        if (x > window.innerWidth - 99) {
           changeMode("1");
         }
       };
@@ -50,3 +39,26 @@ export default function getPet(nextRoom, lastRoom, changeMode, addToInventory, f
     }
   return pet;
 }
+
+function availableArea(currentRoom, changeMode, addToInventory, findedItems, height, width) {
+  let pet ={};
+  if (currentRoom === 0) { //PrisonStart
+    pet.minX = 0;
+    pet.minY = window.innerHeight/2 + 70;
+    pet.maxX = window.innerWidth - width;
+    pet.maxY = window.innerHeight - 170;
+  } else if (currentRoom === 1) { //Gym
+      pet.minX = 0;
+      pet.minY = window.innerHeight/2 + 120;
+      pet.maxX = window.innerWidth - width;
+      pet.maxY = window.innerHeight - 90;
+  } else if (currentRoom === 2) { //Gym2
+      pet.minX = 0;
+      pet.minY = window.innerHeight/2 + 120;
+      pet.maxX = window.innerWidth - width;
+      pet.maxY = window.innerHeight - 90;
+    }
+  return pet;
+}
+
+export {getPet, availableArea};
