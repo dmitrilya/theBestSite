@@ -123,6 +123,7 @@ export default class Inventory extends Component {
     let numberOfSlot = this.numberOfSlot(); //куда добавить
 
     inventory[numberOfSlot] = this.item(numberOfItem); //само добавление в инвентарь (массив this.state.inventory)
+    console.log(inventory[numberOfSlot]);
 
     //просто координаты первого пустого слота
     if (numberOfSlot<8) { //первая строка инвентаря
